@@ -33,7 +33,7 @@ public class LoginFrame extends JFrame
         GridBagConstraints gbc = new GridBagConstraints();
         
         //Banner
-        ImageIcon icon = new ImageIcon("*Insert MotorPH.png location here*"); //ex: "C:/User/PCName/Documents/NetBeansProjects/MotorPH Portal v1.1/MotorPH.png"
+        ImageIcon icon = new ImageIcon("resources/MotorPH.png"); //ex: "C:/User/PCName/Documents/NetBeansProjects/MotorPH Portal v1.1/MotorPH.png"
         ImageIcon resizedIcon = resizeImageIcon(icon, 450, 200);
         JLabel jImage = new JLabel(icon);
         jImage = new JLabel(resizedIcon);
