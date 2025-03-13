@@ -4,12 +4,15 @@ import org.mapua.Employees;
 import org.mapua.EmployeeRepository;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 public class MainFrame extends JFrame {
@@ -24,6 +27,10 @@ public class MainFrame extends JFrame {
     private EmployeeRepository employeeRepository;
     private Employees employees;
 
+    private JScrollPane scrollPane;
+    private JPanel listPanel;
+    private JPanel buttonPanel;
+
     public MainFrame() {
         // Initialize EmployeeRepository and Employees with dependency injection
         employeeRepository = new EmployeeRepository();
@@ -36,7 +43,7 @@ public class MainFrame extends JFrame {
         setResizable(false);
 
         // Initialize Label
-        JPanel listPanel = new JPanel();
+        listPanel = new JPanel();
         listTitle = new JLabel("List of Employees");
         listTitle.setHorizontalAlignment(SwingConstants.LEFT);
         listPanel.add(listTitle);
@@ -46,7 +53,7 @@ public class MainFrame extends JFrame {
         table = new JTable(tableModel);
         table.setDefaultEditor(Object.class, null);
         table.getTableHeader().setBackground(Color.yellow);
-        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane = new JScrollPane(table);
 
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -127,7 +134,7 @@ public class MainFrame extends JFrame {
             }
         });
 
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.add(editButton);
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
@@ -137,6 +144,9 @@ public class MainFrame extends JFrame {
         getContentPane().add(listPanel, BorderLayout.NORTH);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+        // Call the styleComponents method to apply styles
+        styleComponents();
     }
 
     public static void main(String[] args) {
@@ -146,5 +156,76 @@ public class MainFrame extends JFrame {
                 frame.setVisible(true);
             }
         });
+    }
+
+    // In MainFrame.java constructor after initializing components
+    private void styleComponents() {
+        // Style the table
+        table.setRowHeight(35);
+        table.setIntercellSpacing(new Dimension(10, 5));
+        table.setShowGrid(false);
+        table.setShowHorizontalLines(true);
+        table.setGridColor(new Color(230, 230, 230));
+        table.setSelectionBackground(new Color(232, 242, 254));
+        table.setSelectionForeground(Color.BLACK);
+        table.getTableHeader().setBackground(new Color(240, 240, 240)); // Light gray
+        table.getTableHeader().setForeground(new Color(60, 60, 60)); // Dark gray
+        table.setSelectionBackground(new Color(232, 242, 254)); // Light blue
+        table.setSelectionForeground(Color.BLACK); // Black text
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+
+        // Style the scrollpane
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setBackground(Color.WHITE);
+
+        // Style the buttons
+        styleButton(editButton, new Color(25, 118, 210), Color.WHITE);
+        styleButton(addButton, new Color(76, 175, 80), Color.WHITE);
+        styleButton(deleteButton, new Color(211, 47, 47), Color.WHITE);
+        styleButton(logoutButton, new Color(158, 158, 158), Color.WHITE);
+
+        // Style the panel
+        listPanel.setBackground(Color.WHITE);
+        listPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 5, 15));
+        listTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        // Style button panel
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Style the frame
+        getContentPane().setBackground(Color.WHITE);
+    }
+
+    private void styleButton(JButton button, Color bgColor, Color fgColor) {
+        button.setBackground(bgColor);
+        button.setForeground(fgColor);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        button.setPreferredSize(new Dimension(100, 35));
+
+        // Round corners using a custom border
+        button.setBorder(new EmptyBorder(8, 15, 8, 15));
+
+        // Add hover effect
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(darken(bgColor, 0.1f));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(bgColor);
+            }
+        });
+    }
+
+    private Color darken(Color color, float fraction) {
+        int red = Math.max(0, Math.round(color.getRed() * (1 - fraction)));
+        int green = Math.max(0, Math.round(color.getGreen() * (1 - fraction)));
+        int blue = Math.max(0, Math.round(color.getBlue() * (1 - fraction)));
+        return new Color(red, green, blue);
     }
 }
