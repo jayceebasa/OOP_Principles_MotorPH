@@ -67,6 +67,7 @@ public class EmployeeFrame extends JFrame {
        getContentPane().add(tabbedPane);
     }
 
+
     private JPanel createWagePanel() {
         JPanel bigPanel = new JPanel();
         bigPanel.setLayout(new GridLayout(1, 2, 5, 5));
@@ -103,58 +104,49 @@ public class EmployeeFrame extends JFrame {
         netWageWithAllowanceField.setEditable(false);
         netWageWithAllowanceField.setBackground(Color.white);
 
-        //prevent field editing
-        netWageField.setEditable(false);
-        netWageField.setBackground(Color.white);
-        pagibigDeductionField.setEditable(false);
-        pagibigDeductionField.setBackground(Color.white);
-        weeklyWageField.setEditable(false);
-        weeklyWageField.setBackground(Color.white);
-
-
         Employees employee = new Employees().getEmployeeById(employeeId);
-        JTextField basicSalary = new JTextField(df.format(Double.parseDouble(
-                employee.getBasicSalary().replace(",","")
+        JTextField basicSalaryField = new JTextField(df.format(Double.parseDouble(
+                employee.getBasicSalary().replace(",", "")
         )));
-        basicSalary.setEditable(false);
-        basicSalary.setBackground(Color.WHITE);
+        basicSalaryField.setEditable(false);
+        basicSalaryField.setBackground(Color.WHITE);
         leftPanel.add(new JLabel(" Basic Salary:"));
-        leftPanel.add(basicSalary);
-        JTextField riceSubsidy = new JTextField(df.format(
-                Double.parseDouble(employee.getRiceSubsidy().replace(",",""))
+        leftPanel.add(basicSalaryField);
+        JTextField riceSubsidyField = new JTextField(df.format(
+                Double.parseDouble(employee.getRiceSubsidy().replace(",", ""))
         ));
-        riceSubsidy.setEditable(false);
-        riceSubsidy.setBackground(Color.WHITE);
+        riceSubsidyField.setEditable(false);
+        riceSubsidyField.setBackground(Color.WHITE);
         leftPanel.add(new JLabel(" Rice Subsidy:"));
-        leftPanel.add(riceSubsidy);
-        JTextField phoneAllowance = new JTextField(df.format(
-                Double.parseDouble(employee.getPhoneAllowance().replace(",",""))
+        leftPanel.add(riceSubsidyField);
+        JTextField phoneAllowanceField = new JTextField(df.format(
+                Double.parseDouble(employee.getPhoneAllowance().replace(",", ""))
         ));
-        phoneAllowance.setEditable(false);
-        phoneAllowance.setBackground(Color.WHITE);
+        phoneAllowanceField.setEditable(false);
+        phoneAllowanceField.setBackground(Color.WHITE);
         leftPanel.add(new JLabel(" Phone Allowance:"));
-        leftPanel.add(phoneAllowance);
-        JTextField clothingAllowance = new JTextField(df.format(
-                Double.parseDouble(employee.getClothingAllowance().replace(",",""))
+        leftPanel.add(phoneAllowanceField);
+        JTextField clothingAllowanceField = new JTextField(df.format(
+                Double.parseDouble(employee.getClothingAllowance().replace(",", ""))
         ));
-        clothingAllowance.setEditable(false);
-        clothingAllowance.setBackground(Color.WHITE);
+        clothingAllowanceField.setEditable(false);
+        clothingAllowanceField.setBackground(Color.WHITE);
         leftPanel.add(new JLabel(" Clothing Allowance:"));
-        leftPanel.add(clothingAllowance);
-        JTextField perCutOffRate = new JTextField(df.format(
-                Double.parseDouble(employee.getGrossSemiMonthlyRate().replace(",",""))
+        leftPanel.add(clothingAllowanceField);
+        JTextField perCutOffRateField = new JTextField(df.format(
+                Double.parseDouble(employee.getGrossSemiMonthlyRate().replace(",", ""))
         ));
-        perCutOffRate.setEditable(false);
-        perCutOffRate.setBackground(Color.WHITE);
+        perCutOffRateField.setEditable(false);
+        perCutOffRateField.setBackground(Color.WHITE);
         leftPanel.add(new JLabel(" Per Cut-Off Rate:"));
-        leftPanel.add(perCutOffRate);
-        JTextField hourlyRate = new JTextField(df.format(
-                Double.parseDouble(employee.getHourlyRate().replace(",",""))
+        leftPanel.add(perCutOffRateField);
+        JTextField hourlyRateField = new JTextField(df.format(
+                Double.parseDouble(employee.getHourlyRate().replace(",", ""))
         ));
-        hourlyRate.setEditable(false);
-        hourlyRate.setBackground(Color.WHITE);
+        hourlyRateField.setEditable(false);
+        hourlyRateField.setBackground(Color.WHITE);
         leftPanel.add(new JLabel(" Hourly Rate:"));
-        leftPanel.add(hourlyRate);
+        leftPanel.add(hourlyRateField);
         leftPanel.add(new JLabel(" Gross Wage:"));
         JTextField grossWageField = getjTextField(employee);
         leftPanel.add(grossWageField);
@@ -188,60 +180,21 @@ public class EmployeeFrame extends JFrame {
         rightPanel.add(new JLabel());
         rightPanel.add(buttonPanel);
 
-        withHoldingTaxDeductionField.setText(String.valueOf(
-                df.format(MandatoryTaxContribution.computeWithHoldingTax(Double.parseDouble(
-                        basicSalary.getText().replace(",", ""))
-                ))
-        ));
-        sssDeductionField.setText(String.valueOf(
-                df.format(MandatoryTaxContribution.getSSSContributionBySalary(
-                        Double.parseDouble(basicSalary.getText().replace(",", ""))
-                ))
-        ));
-        philHealthDeductionField.setText(String.valueOf(
-                df.format(MandatoryTaxContribution.getPhilHealthContributionBySalary(
-                        Double.parseDouble(basicSalary.getText().replace(",", ""))
-                ))
-        ));
-        pagibigDeductionField.setText(String.valueOf(
-                df.format(MandatoryTaxContribution.getPagibigContributionBySalary(
-                        Double.parseDouble(basicSalary.getText().replace(",", ""))
-                ))
-        ));
-        netWageField.setText(String.valueOf(
-                df.format(Double.parseDouble(basicSalary.getText().replace(",", "")) -
-                        (MandatoryTaxContribution.computeWithHoldingTax(Double.parseDouble(
-                                basicSalary.getText().replace(",", ""))) +
-                                MandatoryTaxContribution.getSSSContributionBySalary(Double.parseDouble(
-                                        basicSalary.getText().replace(",", ""))) +
-                                MandatoryTaxContribution.getPhilHealthContributionBySalary(Double.parseDouble(
-                                        basicSalary.getText().replace(",", ""))) +
-                                MandatoryTaxContribution.getPagibigContributionBySalary(Double.parseDouble(
-                                        basicSalary.getText().replace(",", ""))))
-                )
-
-        ));
-        netWageWithAllowanceField.setText(df.format(
-                Double.parseDouble(netWageField.getText().replace(",","")) +
-                        Double.parseDouble(riceSubsidy.getText().replace(",","")) +
-                        Double.parseDouble(phoneAllowance.getText().replace(",","")) +
-                        Double.parseDouble(clothingAllowance.getText().replace(",",""))
-        ));
-
         computeWageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (hoursWorkedField.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please enter hours worked per week.");
+                    return;
+                }
+
                 hoursWorkedField.setEditable(false);
                 hoursWorkedField.setBackground(Color.white);
 
-                if (hoursWorkedField.getText().trim().isEmpty())
-                    hoursWorkedField.setText("40");
-
-                Wage wage = new Wage();
-                wage.setHoursPerWeekWorked(hoursWorkedField.getText().trim());
-                wage.computeWageByEmployeeId(employeeId);
-
-                weeklyWageField.setText(df.format(Double.parseDouble(wage.getGrossWeeklySalary())));
+                double hoursWorked = Double.parseDouble(hoursWorkedField.getText().trim());
+                double hourlyRate = Double.parseDouble(employee.getHourlyRate().replace(",", ""));
+                double grossWeeklySalary = hoursWorked * hourlyRate;
+                weeklyWageField.setText(df.format(grossWeeklySalary));
 
                 double basicSalary = Double.parseDouble(basicSalaryField.getText().replace(",", ""));
                 double withHoldingTax = MandatoryTaxContribution.computeWithHoldingTax(basicSalary);
@@ -254,7 +207,7 @@ public class EmployeeFrame extends JFrame {
                 philHealthDeductionField.setText(df.format(philHealthContribution));
                 pagibigDeductionField.setText(df.format(pagibigContribution));
 
-                double netWage = basicSalary - (withHoldingTax + sssContribution + philHealthContribution + pagibigContribution);
+                double netWage = grossWeeklySalary - (withHoldingTax + sssContribution + philHealthContribution + pagibigContribution);
                 netWageField.setText(df.format(netWage));
 
                 double riceSubsidy = Double.parseDouble(riceSubsidyField.getText().replace(",", ""));
@@ -286,7 +239,6 @@ public class EmployeeFrame extends JFrame {
         add(bigPanel, BorderLayout.CENTER);
         return bigPanel;
     }
-
 
     private static JTextField getjTextField(Employees employee) {
         JTextField grossWageField = new JTextField();
