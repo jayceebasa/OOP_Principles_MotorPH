@@ -10,182 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Employees {
-    // Encapsulation: Private fields for employee details
-    private String employeeNumber;
-    private String lastName;
-    private String firstName;
-    private String birthdate;
-    private String address;
-    private String phoneNumber;
-    private String sss;
-    private String philHealth;
-    private String tin;
-    private String pagibig;
-    private String status;
-    private String position;
-    private String immediateSupervisor;
-    private String basicSalary;
-    private String riceSubsidy;
-    private String phoneAllowance;
-    private String clothingAllowance;
-    private String grossSemiMonthlyRate;
-    private String hourlyRate;
-
+public class Employees extends Employee {
     private static final String FILENAME = "resources/Employees.csv";
-
-    // Encapsulation: Public getters and setters for all fields
-    public String getEmployeeNumber() {
-        return employeeNumber;
-    }
-
-    public void setEmployeeNumber(String employeeNumber) {
-        this.employeeNumber = employeeNumber;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getBirthdate() {
-        return birthdate;
-    }
-
-    public void setBirthdate(String birthdate) {
-        this.birthdate = birthdate;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getSss() {
-        return sss;
-    }
-
-    public void setSss(String sss) {
-        this.sss = sss;
-    }
-
-    public String getPhilHealth() {
-        return philHealth;
-    }
-
-    public void setPhilHealth(String philHealth) {
-        this.philHealth = philHealth;
-    }
-
-    public String getTin() {
-        return tin;
-    }
-
-    public void setTin(String tin) {
-        this.tin = tin;
-    }
-
-    public String getPagibig() {
-        return pagibig;
-    }
-
-    public void setPagibig(String pagibig) {
-        this.pagibig = pagibig;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getImmediateSupervisor() {
-        return immediateSupervisor;
-    }
-
-    public void setImmediateSupervisor(String immediateSupervisor) {
-        this.immediateSupervisor = immediateSupervisor;
-    }
-
-    public String getBasicSalary() {
-        return basicSalary;
-    }
-
-    public void setBasicSalary(String basicSalary) {
-        this.basicSalary = basicSalary;
-    }
-
-    public String getRiceSubsidy() {
-        return riceSubsidy;
-    }
-
-    public void setRiceSubsidy(String riceSubsidy) {
-        this.riceSubsidy = riceSubsidy;
-    }
-
-    public String getPhoneAllowance() {
-        return phoneAllowance;
-    }
-
-    public void setPhoneAllowance(String phoneAllowance) {
-        this.phoneAllowance = phoneAllowance;
-    }
-
-    public String getClothingAllowance() {
-        return clothingAllowance;
-    }
-
-    public void setClothingAllowance(String clothingAllowance) {
-        this.clothingAllowance = clothingAllowance;
-    }
-
-    public String getGrossSemiMonthlyRate() {
-        return grossSemiMonthlyRate;
-    }
-
-    public void setGrossSemiMonthlyRate(String grossSemiMonthlyRate) {
-        this.grossSemiMonthlyRate = grossSemiMonthlyRate;
-    }
-
-    public String getHourlyRate() {
-        return hourlyRate;
-    }
-
-    public void setHourlyRate(String hourlyRate) {
-        this.hourlyRate = hourlyRate;
-    }
 
     // Encapsulation: Public method to get table header
     public String[] getTableHeader() {
@@ -253,25 +79,25 @@ public class Employees {
     // Abstraction: Public method to add an employee
     public void addEmployee() {
         String[] newRecord = new String[19];
-        newRecord[0] = employeeNumber;
-        newRecord[1] = lastName;
-        newRecord[2] = firstName;
-        newRecord[3] = birthdate;
-        newRecord[4] = address;
-        newRecord[5] = phoneNumber;
-        newRecord[6] = sss;
-        newRecord[7] = philHealth;
-        newRecord[8] = tin;
-        newRecord[9] = pagibig;
-        newRecord[10] = status;
-        newRecord[11] = position;
-        newRecord[12] = immediateSupervisor;
-        newRecord[13] = basicSalary;
-        newRecord[14] = riceSubsidy;
-        newRecord[15] = phoneAllowance;
-        newRecord[16] = clothingAllowance;
-        newRecord[17] = grossSemiMonthlyRate;
-        newRecord[18] = hourlyRate;
+        newRecord[0] = getEmployeeNumber();
+        newRecord[1] = getLastName();
+        newRecord[2] = getFirstName();
+        newRecord[3] = getBirthdate();
+        newRecord[4] = getAddress();
+        newRecord[5] = getPhoneNumber();
+        newRecord[6] = getSss();
+        newRecord[7] = getPhilHealth();
+        newRecord[8] = getTin();
+        newRecord[9] = getPagibig();
+        newRecord[10] = getStatus();
+        newRecord[11] = getPosition();
+        newRecord[12] = getImmediateSupervisor();
+        newRecord[13] = getBasicSalary();
+        newRecord[14] = getRiceSubsidy();
+        newRecord[15] = getPhoneAllowance();
+        newRecord[16] = getClothingAllowance();
+        newRecord[17] = getGrossSemiMonthlyRate();
+        newRecord[18] = getHourlyRate();
 
         try {
             EmployeeResource employeeResource = new EmployeeResource();
@@ -290,25 +116,25 @@ public class Employees {
             EmployeeResource employeeResource = new EmployeeResource();
             CSVReader reader = employeeResource.readCSVEmployee();
             for (String[] row; (row = reader.readNext()) != null; ) {
-                if (row[0].equals(employeeNumber)) {
-                    row[1] = lastName;
-                    row[2] = firstName;
-                    row[3] = birthdate;
-                    row[4] = address;
-                    row[5] = phoneNumber;
-                    row[6] = sss;
-                    row[7] = philHealth;
-                    row[8] = tin;
-                    row[9] = pagibig;
-                    row[10] = status;
-                    row[11] = position;
-                    row[12] = immediateSupervisor;
-                    row[13] = basicSalary;
-                    row[14] = riceSubsidy;
-                    row[15] = phoneAllowance;
-                    row[16] = clothingAllowance;
-                    row[17] = grossSemiMonthlyRate;
-                    row[18] = hourlyRate;
+                if (row[0].equals(getEmployeeNumber())) {
+                    row[1] = getLastName();
+                    row[2] = getFirstName();
+                    row[3] = getBirthdate();
+                    row[4] = getAddress();
+                    row[5] = getPhoneNumber();
+                    row[6] = getSss();
+                    row[7] = getPhilHealth();
+                    row[8] = getTin();
+                    row[9] = getPagibig();
+                    row[10] = getStatus();
+                    row[11] = getPosition();
+                    row[12] = getImmediateSupervisor();
+                    row[13] = getBasicSalary();
+                    row[14] = getRiceSubsidy();
+                    row[15] = getPhoneAllowance();
+                    row[16] = getClothingAllowance();
+                    row[17] = getGrossSemiMonthlyRate();
+                    row[18] = getHourlyRate();
                 }
                 records.add(row);
             }
@@ -379,5 +205,11 @@ public class Employees {
         } catch (IOException | CsvValidationException e) {
             throw new RuntimeException("Error deleting employee: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void computeSalary() {
+        // Default implementation for Employees class
+        // This can be overridden in subclasses if needed
     }
 }

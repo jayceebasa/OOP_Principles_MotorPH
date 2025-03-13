@@ -233,16 +233,36 @@ public class EmployeeFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 hoursWorkedField.setEditable(false);
                 hoursWorkedField.setBackground(Color.white);
-                withHoldingTaxDeductionField.setBackground(Color.white);
-                sssDeductionField.setBackground(Color.white);
 
-                if(hoursWorkedField.getText().trim().isEmpty())
+                if (hoursWorkedField.getText().trim().isEmpty())
                     hoursWorkedField.setText("40");
 
                 Wage wage = new Wage();
                 wage.setHoursPerWeekWorked(hoursWorkedField.getText().trim());
                 wage.computeWageByEmployeeId(employeeId);
+
                 weeklyWageField.setText(df.format(Double.parseDouble(wage.getGrossWeeklySalary())));
+
+                double basicSalary = Double.parseDouble(basicSalaryField.getText().replace(",", ""));
+                double withHoldingTax = MandatoryTaxContribution.computeWithHoldingTax(basicSalary);
+                double sssContribution = MandatoryTaxContribution.getSSSContributionBySalary(basicSalary);
+                double philHealthContribution = MandatoryTaxContribution.getPhilHealthContributionBySalary(basicSalary);
+                double pagibigContribution = MandatoryTaxContribution.getPagibigContributionBySalary(basicSalary);
+
+                withHoldingTaxDeductionField.setText(df.format(withHoldingTax));
+                sssDeductionField.setText(df.format(sssContribution));
+                philHealthDeductionField.setText(df.format(philHealthContribution));
+                pagibigDeductionField.setText(df.format(pagibigContribution));
+
+                double netWage = basicSalary - (withHoldingTax + sssContribution + philHealthContribution + pagibigContribution);
+                netWageField.setText(df.format(netWage));
+
+                double riceSubsidy = Double.parseDouble(riceSubsidyField.getText().replace(",", ""));
+                double phoneAllowance = Double.parseDouble(phoneAllowanceField.getText().replace(",", ""));
+                double clothingAllowance = Double.parseDouble(clothingAllowanceField.getText().replace(",", ""));
+                double netWageWithAllowance = netWage + riceSubsidy + phoneAllowance + clothingAllowance;
+                netWageWithAllowanceField.setText(df.format(netWageWithAllowance));
+
                 resetWageButton.setEnabled(true);
                 computeWageButton.setEnabled(false);
             }
