@@ -1,6 +1,8 @@
 package Frames;
 
 import org.mapua.Employees;
+import org.mapua.EmployeeRepository;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -19,7 +21,14 @@ public class MainFrame extends JFrame {
     private JButton logoutButton;
     private JButton deleteButton;
 
+    private EmployeeRepository employeeRepository;
+    private Employees employees;
+
     public MainFrame() {
+        // Initialize EmployeeRepository and Employees with dependency injection
+        employeeRepository = new EmployeeRepository();
+        employees = new Employees(employeeRepository);
+
         setTitle("MotorPH Portal");
         setSize(650, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,27 +42,22 @@ public class MainFrame extends JFrame {
         listPanel.add(listTitle);
 
         // Initialize table
-        Employees employees = new Employees();
-        try {
-            tableModel = new DefaultTableModel(employees.getTableData(), employees.getTableHeader());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        tableModel = new DefaultTableModel(employees.getTableData(), employees.getTableHeader());
         table = new JTable(tableModel);
-        table.setDefaultEditor(Object.class,null);
+        table.setDefaultEditor(Object.class, null);
         table.getTableHeader().setBackground(Color.yellow);
         JScrollPane scrollPane = new JScrollPane(table);
 
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if((table.getValueAt(table.getSelectedRow(),0).toString() != null) ||
-                        (table.getValueAt(table.getSelectedRow(),0).toString().equals("0"))){
+                if ((table.getValueAt(table.getSelectedRow(), 0).toString() != null ||
+                        (table.getValueAt(table.getSelectedRow(), 0).toString().equals("0")))) {
                     editButton.setVisible(true);
-                    deleteButton.setVisible(true); 
-                }else {
+                    deleteButton.setVisible(true);
+                } else {
                     editButton.setVisible(false);
-                    editButton.setVisible(false); 
+                    deleteButton.setVisible(false);
                 }
             }
         });
@@ -67,7 +71,7 @@ public class MainFrame extends JFrame {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     EmployeeFrame employeeFrame = new EmployeeFrame();
-                    employeeFrame.updateEmployee(table.getValueAt(selectedRow,0).toString());
+                    employeeFrame.updateEmployee(table.getValueAt(selectedRow, 0).toString());
                     employeeFrame.setVisible(true);
                     dispose();
                 } else {
@@ -75,38 +79,29 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-        
-          // Delete function
+
+        // Delete function
         deleteButton = new JButton("Delete");
         deleteButton.setVisible(false);
-        deleteButton.addActionListener(new ActionListener() 
-        {
+        deleteButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) 
-            {
+            public void actionPerformed(ActionEvent e) {
                 int selectedRow = table.getSelectedRow();
-                if (selectedRow != -1) 
-                {
+                if (selectedRow != -1) {
                     int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this employee?",
-                    "Confirmation", JOptionPane.YES_NO_OPTION);
-                    if (option == JOptionPane.YES_OPTION) 
-                    {
-                        String employeeId = table.getValueAt(selectedRow, 0).toString();                    
-                        Employees employees = new Employees();
+                            "Confirmation", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.YES_OPTION) {
+                        String employeeId = table.getValueAt(selectedRow, 0).toString();
                         employees.deleteEmployee(employeeId);
-                        //to refresh the window after deleting
+                        // To refresh the window after deleting
                         dispose();
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
                                 new MainFrame().setVisible(true);
                             }
                         });
-                        
                     }
-                } else 
-                {
+                } else {
                     JOptionPane.showMessageDialog(null, "Please select a row to delete.");
                 }
             }
@@ -121,26 +116,25 @@ public class MainFrame extends JFrame {
                 dispose();
             }
         });
+
         // Logout Function
         logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 dispose();
                 new LoginFrame().setVisible(true);
             }
         });
 
-
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(editButton);
         buttonPanel.add(addButton);
-        buttonPanel.add(deleteButton); 
+        buttonPanel.add(deleteButton);
         buttonPanel.add(logoutButton);
 
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(listPanel,BorderLayout.NORTH);
+        getContentPane().add(listPanel, BorderLayout.NORTH);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -153,5 +147,4 @@ public class MainFrame extends JFrame {
             }
         });
     }
-
 }

@@ -1,17 +1,17 @@
 package Frames;
 
+import org.mapua.Employee;
 import org.mapua.Employees;
+import org.mapua.EmployeeRepository;
 import org.mapua.MandatoryTaxContribution;
-import org.mapua.Wage;
+import org.mapua.RegularEmployee;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public class EmployeeFrame extends JFrame {
     private String employeeId;
@@ -23,8 +23,8 @@ public class EmployeeFrame extends JFrame {
     private JTextField phoneNumberField;
     private JTextField sssNumberField;
     private JTextField philhealthNumberField;
-    private JTextField tinNumberField; 
-    private JTextField pagibigNumberField; 
+    private JTextField tinNumberField;
+    private JTextField pagibigNumberField;
     private JTextField statusField;
     private JTextField positionField;
     private JTextField supervisorField;
@@ -56,17 +56,23 @@ public class EmployeeFrame extends JFrame {
     private JTextField netWageWithAllowanceField;
     private static final DecimalFormat df = new DecimalFormat("#,###.00");
 
+    private EmployeeRepository employeeRepository;
+    private Employees employees;
+
     public EmployeeFrame() {
+        // Initialize EmployeeRepository and Employees with dependency injection
+        employeeRepository = new EmployeeRepository();
+        employees = new Employees(employeeRepository);
+
         setTitle("Employee Details");
         setSize(700, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         tabbedPane = new JTabbedPane();
-        tabbedPane.add("Profile",createProfilePanel());
- 
-       getContentPane().add(tabbedPane);
-    }
+        tabbedPane.add("Profile", createProfilePanel());
 
+        getContentPane().add(tabbedPane);
+    }
 
     private JPanel createWagePanel() {
         JPanel bigPanel = new JPanel();
@@ -104,7 +110,7 @@ public class EmployeeFrame extends JFrame {
         netWageWithAllowanceField.setEditable(false);
         netWageWithAllowanceField.setBackground(Color.white);
 
-        Employees employee = new Employees().getEmployeeById(employeeId);
+        Employee employee = employees.getEmployeeById(employeeId);
         JTextField basicSalaryField = new JTextField(df.format(Double.parseDouble(
                 employee.getBasicSalary().replace(",", "")
         )));
@@ -240,20 +246,20 @@ public class EmployeeFrame extends JFrame {
         return bigPanel;
     }
 
-    private static JTextField getjTextField(Employees employee) {
+    private static JTextField getjTextField(Employee employee) {
         JTextField grossWageField = new JTextField();
         grossWageField.setEditable(false);
         grossWageField.setBackground(Color.white);
         BigDecimal totalGross =
-                new BigDecimal(employee.getBasicSalary().replace(",",""))
-                    .add(new BigDecimal(employee.getRiceSubsidy().replace(",","")))
-                    .add(new BigDecimal(employee.getPhoneAllowance().replace(",","")))
-                    .add(new BigDecimal(employee.getClothingAllowance().replace(",","")));
+                new BigDecimal(employee.getBasicSalary().replace(",", ""))
+                        .add(new BigDecimal(employee.getRiceSubsidy().replace(",", "")))
+                        .add(new BigDecimal(employee.getPhoneAllowance().replace(",", "")))
+                        .add(new BigDecimal(employee.getClothingAllowance().replace(",", "")));
         grossWageField.setText(df.format(totalGross));
         return grossWageField;
     }
 
-    private JPanel createProfilePanel(){
+    private JPanel createProfilePanel() {
         JPanel bigPanel = new JPanel();
         bigPanel.setLayout(new GridLayout(1, 2, 5, 5));
         JPanel panel1 = new JPanel();
@@ -262,7 +268,7 @@ public class EmployeeFrame extends JFrame {
         panel2.setLayout(new GridLayout(10, 2, 5, 5));
 
         JLabel idLabel = new JLabel("  Employee ID:");
-        idField = new JTextField(new Employees().generateId());
+        idField = new JTextField(employees.generateId());
         isUpdate = false;
         idField.setEnabled(false);
         JLabel lastNameLabel = new JLabel("  Last Name:");
@@ -377,7 +383,6 @@ public class EmployeeFrame extends JFrame {
         return bigPanel;
     }
 
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -388,10 +393,10 @@ public class EmployeeFrame extends JFrame {
     }
 
     public void updateEmployee(String employeeId) {
-        if(!employeeId.trim().isEmpty()){
+        if (!employeeId.trim().isEmpty()) {
             this.employeeId = employeeId;
             tabbedPane = new JTabbedPane();
-            tabbedPane.add("Profile",createProfilePanel());
+            tabbedPane.add("Profile", createProfilePanel());
             tabbedPane.add("Wage", createWagePanel());
             getContentPane().add(tabbedPane);
             isUpdate = true;
@@ -399,31 +404,31 @@ public class EmployeeFrame extends JFrame {
         }
     }
 
-    private void fillForm(){
-        Employees employees = new Employees().getEmployeeById(this.employeeId);
-        idField.setText(employees.getEmployeeNumber());
-        lastNameField.setText(employees.getLastName());
-        firstNameField.setText(employees.getFirstName());
-        birthdayField.setText(employees.getBirthdate());
-        addressField.setText(employees.getAddress());
-        phoneNumberField.setText(employees.getPhoneNumber());
-        sssNumberField.setText(employees.getSss());
-        philhealthNumberField.setText(employees.getPhilHealth());
-        tinNumberField.setText(employees.getTin());
-        pagibigNumberField.setText(employees.getPagibig());
-        statusField.setText(employees.getStatus());
-        positionField.setText(employees.getPosition());
-        supervisorField.setText(employees.getImmediateSupervisor());
-        basicSalaryField.setText(employees.getBasicSalary());
-        riceSubsidyField.setText(employees.getRiceSubsidy());
-        phoneAllowanceField.setText(employees.getPhoneAllowance());
-        clothingAllowanceField.setText(employees.getClothingAllowance());
-        grossSemiMonthlyRateField.setText(employees.getGrossSemiMonthlyRate());
-        hourlyRateField.setText(employees.getHourlyRate());
+    private void fillForm() {
+        Employee employee = employees.getEmployeeById(this.employeeId);
+        idField.setText(employee.getEmployeeNumber());
+        lastNameField.setText(employee.getLastName());
+        firstNameField.setText(employee.getFirstName());
+        birthdayField.setText(employee.getBirthdate());
+        addressField.setText(employee.getAddress());
+        phoneNumberField.setText(employee.getPhoneNumber());
+        sssNumberField.setText(employee.getSss());
+        philhealthNumberField.setText(employee.getPhilHealth());
+        tinNumberField.setText(employee.getTin());
+        pagibigNumberField.setText(employee.getPagibig());
+        statusField.setText(employee.getStatus());
+        positionField.setText(employee.getPosition());
+        supervisorField.setText(employee.getImmediateSupervisor());
+        basicSalaryField.setText(employee.getBasicSalary());
+        riceSubsidyField.setText(employee.getRiceSubsidy());
+        phoneAllowanceField.setText(employee.getPhoneAllowance());
+        clothingAllowanceField.setText(employee.getClothingAllowance());
+        grossSemiMonthlyRateField.setText(employee.getGrossSemiMonthlyRate());
+        hourlyRateField.setText(employee.getHourlyRate());
     }
 
     private void saveEmployee() {
-        Employees employee = new Employees();
+        Employee employee = new RegularEmployee(); // Use RegularEmployee or PartTimeEmployee
         employee.setEmployeeNumber(idField.getText());
         employee.setLastName(lastNameField.getText());
         employee.setFirstName(firstNameField.getText());
@@ -440,14 +445,14 @@ public class EmployeeFrame extends JFrame {
         employee.setBasicSalary(basicSalaryField.getText());
         employee.setRiceSubsidy(riceSubsidyField.getText());
         employee.setPhoneAllowance(phoneAllowanceField.getText());
-        employee.setClothingAllowance(clothingAllowanceField.getText());employee.setGrossSemiMonthlyRate(grossSemiMonthlyRateField.getText());
+        employee.setClothingAllowance(clothingAllowanceField.getText());
+        employee.setGrossSemiMonthlyRate(grossSemiMonthlyRateField.getText());
         employee.setHourlyRate(hourlyRateField.getText());
-        if(!isUpdate){
-            employee.addEmployee();
-        }else{
-            employee.updateEmployee();
+
+        if (!isUpdate) {
+            employees.addEmployee(employee);
+        } else {
+            employees.updateEmployee(employee);
         }
     }
 }
-
-
