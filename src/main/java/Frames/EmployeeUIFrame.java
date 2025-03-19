@@ -283,30 +283,43 @@ public class EmployeeUIFrame extends JFrame {
         JTextField phoneNumberField = new JTextField(employee.getPhoneNumber());
         JLabel sssNumberLabel = new JLabel("  SSS Number:");
         JTextField sssNumberField = new JTextField(employee.getSss());
+        sssNumberField.setEditable(false);
         JLabel philhealthNumberLabel = new JLabel("  Philhealth Number:");
         JTextField philhealthNumberField = new JTextField(employee.getPhilHealth());
+        philhealthNumberField.setEditable(false);
         JLabel tinNumberLabel = new JLabel("  Tax Income Number:");
         JTextField tinNumberField = new JTextField(employee.getTin());
+        tinNumberField.setEditable(false);
         JLabel housingNumberLabel = new JLabel("  Pagibig Number:");
         JTextField pagibigNumberField = new JTextField(employee.getPagibig());
+        pagibigNumberField.setEditable(false);
         JLabel statusLabel = new JLabel(" Status:");
         JTextField statusField = new JTextField(employee.getStatus());
+        statusField.setEditable(false);
         JLabel positionLabel = new JLabel(" Position:");
         JTextField positionField = new JTextField(employee.getPosition());
+        positionField.setEditable(false);
         JLabel supervisorLabel = new JLabel(" Immediate Supervisor:");
         JTextField supervisorField = new JTextField(employee.getImmediateSupervisor());
+        supervisorField.setEditable(false);
         JLabel basicSalaryLabel = new JLabel(" Basic Salary:");
         JTextField basicSalaryField = new JTextField(employee.getBasicSalary());
+        basicSalaryField.setEditable(false);
         JLabel riceSubsidyLabel = new JLabel(" Rice Subsidy:");
         JTextField riceSubsidyField = new JTextField(employee.getRiceSubsidy());
+        riceSubsidyField.setEditable(false);
         JLabel phoneAllowanceLabel = new JLabel(" Phone Allowance:");
         JTextField phoneAllowanceField = new JTextField(employee.getPhoneAllowance());
+        phoneAllowanceField.setEditable(false);
         JLabel clothingAllowanceLabel = new JLabel(" Clothing Allowance:");
         JTextField clothingAllowanceField = new JTextField(employee.getClothingAllowance());
+        clothingAllowanceField.setEditable(false);
         JLabel grossSemiMonthlyRateLabel = new JLabel(" Gross Semi-monthly Rate:");
         JTextField grossSemiMonthlyRateField = new JTextField(employee.getGrossSemiMonthlyRate());
+        grossSemiMonthlyRateField.setEditable(false);
         JLabel hourlyRateLabel = new JLabel(" Hourly Rate:");
         JTextField hourlyRateField = new JTextField(employee.getHourlyRate());
+        hourlyRateField.setEditable(false);
 
         panel1.add(idLabel);
         panel1.add(idField);
@@ -356,8 +369,6 @@ public class EmployeeUIFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveEmployee();
-                dispose();
-                new MainFrame().setVisible(true);
                 JOptionPane.showMessageDialog(null, "Record is saved!");
             }
         });
