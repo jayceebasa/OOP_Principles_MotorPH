@@ -110,6 +110,30 @@ public class EmployeeFrame extends JFrame {
         styleFormComponents();
     }
 
+    private boolean validateHoursWorked() {
+        String hours = hoursWorkedField.getText().trim();
+        if (hours.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter hours worked per week.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        try {
+            double hoursWorked = Double.parseDouble(hours);
+            if (hoursWorked <= 0) {
+                JOptionPane.showMessageDialog(this, "Hours worked must be greater than zero.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            if (hoursWorked > 168) { // Max hours in a week
+                JOptionPane.showMessageDialog(this, "Hours worked cannot exceed 168 hours per week.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Hours worked must be a valid number.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+
     private void styleFormComponents() {
         Component[] components = getContentPane().getComponents();
         for (Component component : components) {
@@ -219,7 +243,7 @@ public class EmployeeFrame extends JFrame {
         philHealthDeductionField = new JTextField();
         philHealthDeductionField.setEditable(false);
         philHealthDeductionField.setBackground(Color.white);
-        netWageLabel = new JLabel(" Net Wage:");
+        netWageLabel = new JLabel(" Monthly Net Wage:");
         netWageField = new JTextField();
         netWageField.setEditable(false);
         netWageField.setBackground(Color.white);
@@ -290,7 +314,7 @@ public class EmployeeFrame extends JFrame {
         rightPanel.add(pagibigDeductionField);
         rightPanel.add(netWageLabel);
         rightPanel.add(netWageField);
-        rightPanel.add(new JLabel(" Net Wage with Allowances:"));
+        rightPanel.add(new JLabel(" Monthly Net Wage with Allowances:"));
         rightPanel.add(netWageWithAllowanceField);
 
         computeWageButton = new JButton("Compute");
@@ -306,8 +330,7 @@ public class EmployeeFrame extends JFrame {
         computeWageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (hoursWorkedField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please enter hours worked per week.");
+                if (!validateHoursWorked()) {
                     return;
                 }
 
@@ -318,6 +341,9 @@ public class EmployeeFrame extends JFrame {
                 double hourlyRate = Double.parseDouble(employee.getHourlyRate().replace(",", ""));
                 double grossWeeklySalary = hoursWorked * hourlyRate;
                 weeklyWageField.setText(df.format(grossWeeklySalary));
+
+                // Calculate monthly gross salary (4 weeks per month)
+                double grossMonthlySalary = grossWeeklySalary * 4;
 
                 double basicSalary = Double.parseDouble(basicSalaryField.getText().replace(",", ""));
                 double withHoldingTax = MandatoryTaxContribution.computeWithHoldingTax(basicSalary);
@@ -330,14 +356,15 @@ public class EmployeeFrame extends JFrame {
                 philHealthDeductionField.setText(df.format(philHealthContribution));
                 pagibigDeductionField.setText(df.format(pagibigContribution));
 
-                double netWage = grossWeeklySalary - (withHoldingTax + sssContribution + philHealthContribution + pagibigContribution);
-                netWageField.setText(df.format(netWage));
+                // Calculate monthly net wage instead of weekly
+                double monthlyNetWage = grossMonthlySalary - (withHoldingTax + sssContribution + philHealthContribution + pagibigContribution);
+                netWageField.setText(df.format(monthlyNetWage));
 
                 double riceSubsidy = Double.parseDouble(riceSubsidyField.getText().replace(",", ""));
                 double phoneAllowance = Double.parseDouble(phoneAllowanceField.getText().replace(",", ""));
                 double clothingAllowance = Double.parseDouble(clothingAllowanceField.getText().replace(",", ""));
-                double netWageWithAllowance = netWage + riceSubsidy + phoneAllowance + clothingAllowance;
-                netWageWithAllowanceField.setText(df.format(netWageWithAllowance));
+                double monthlyNetWageWithAllowance = monthlyNetWage + riceSubsidy + phoneAllowance + clothingAllowance;
+                netWageWithAllowanceField.setText(df.format(monthlyNetWageWithAllowance));
 
                 resetWageButton.setEnabled(true);
                 computeWageButton.setEnabled(false);

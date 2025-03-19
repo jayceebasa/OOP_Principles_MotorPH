@@ -102,7 +102,7 @@ public class EmployeeUIFrame extends JFrame {
         philHealthDeductionField = new JTextField();
         philHealthDeductionField.setEditable(false);
         philHealthDeductionField.setBackground(Color.white);
-        netWageLabel = new JLabel(" Net Wage:");
+        netWageLabel = new JLabel(" Monthly Net Wage:");
         netWageField = new JTextField();
         netWageField.setEditable(false);
         netWageField.setBackground(Color.white);
@@ -172,7 +172,7 @@ public class EmployeeUIFrame extends JFrame {
         rightPanel.add(pagibigDeductionField);
         rightPanel.add(netWageLabel);
         rightPanel.add(netWageField);
-        rightPanel.add(new JLabel(" Net Wage with Allowances:"));
+        rightPanel.add(new JLabel(" Monthly Net Wage with Allowances:"));
         rightPanel.add(netWageWithAllowanceField);
 
         computeWageButton = new JButton("Compute");
@@ -192,7 +192,6 @@ public class EmployeeUIFrame extends JFrame {
                     return;
                 }
 
-                // Rest of the calculation code remains the same
                 hoursWorkedField.setEditable(false);
                 hoursWorkedField.setBackground(Color.white);
 
@@ -200,6 +199,9 @@ public class EmployeeUIFrame extends JFrame {
                 double hourlyRate = Double.parseDouble(employee.getHourlyRate().replace(",", ""));
                 double grossWeeklySalary = hoursWorked * hourlyRate;
                 weeklyWageField.setText(df.format(grossWeeklySalary));
+
+                // Calculate monthly gross salary (4 weeks per month)
+                double grossMonthlySalary = grossWeeklySalary * 4;
 
                 double basicSalary = Double.parseDouble(basicSalaryField.getText().replace(",", ""));
                 double withHoldingTax = MandatoryTaxContribution.computeWithHoldingTax(basicSalary);
@@ -212,14 +214,15 @@ public class EmployeeUIFrame extends JFrame {
                 philHealthDeductionField.setText(df.format(philHealthContribution));
                 pagibigDeductionField.setText(df.format(pagibigContribution));
 
-                double netWage = grossWeeklySalary - (withHoldingTax + sssContribution + philHealthContribution + pagibigContribution);
-                netWageField.setText(df.format(netWage));
+                // Calculate monthly net wage instead of weekly
+                double monthlyNetWage = grossMonthlySalary - (withHoldingTax + sssContribution + philHealthContribution + pagibigContribution);
+                netWageField.setText(df.format(monthlyNetWage));
 
                 double riceSubsidy = Double.parseDouble(riceSubsidyField.getText().replace(",", ""));
                 double phoneAllowance = Double.parseDouble(phoneAllowanceField.getText().replace(",", ""));
                 double clothingAllowance = Double.parseDouble(clothingAllowanceField.getText().replace(",", ""));
-                double netWageWithAllowance = netWage + riceSubsidy + phoneAllowance + clothingAllowance;
-                netWageWithAllowanceField.setText(df.format(netWageWithAllowance));
+                double monthlyNetWageWithAllowance = monthlyNetWage + riceSubsidy + phoneAllowance + clothingAllowance;
+                netWageWithAllowanceField.setText(df.format(monthlyNetWageWithAllowance));
 
                 resetWageButton.setEnabled(true);
                 computeWageButton.setEnabled(false);
@@ -347,7 +350,7 @@ public class EmployeeUIFrame extends JFrame {
         bigPanel.add(panel2);
 
         JButton saveButton = new JButton("Save");
-        JButton clearBackButton = new JButton("Back");
+        JButton clearBackButton = new JButton("Logout");
 
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -363,7 +366,7 @@ public class EmployeeUIFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new MainFrame().setVisible(true);
+                new LoginFrame().setVisible(true);
             }
         });
 
