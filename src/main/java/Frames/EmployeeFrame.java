@@ -423,6 +423,8 @@ public class EmployeeFrame extends JFrame {
         firstNameField = new JTextField();
         JLabel birthdayLabel = new JLabel("  Birthday:");
         birthdayField = new JTextField();
+        birthdayField.setEditable(false);
+        birthdayField.setBackground(Color.WHITE);
         JLabel addressLabel = new JLabel("  Address:");
         addressField = new JTextArea();
         addressField.setLineWrap(true);
@@ -457,6 +459,170 @@ public class EmployeeFrame extends JFrame {
         JLabel hourlyRateLabel = new JLabel(" Hourly Rate:");
         hourlyRateField = new JTextField();
 
+        // Create panel to hold birthday field and calendar button
+        JPanel birthdayPanel = new JPanel(new BorderLayout(5, 0));
+        birthdayPanel.setBackground(backgroundColor);
+        birthdayPanel.add(birthdayField, BorderLayout.CENTER);
+
+        // Create calendar button
+        JButton calendarButton = new JButton("📅");
+        calendarButton.setToolTipText("Select date");
+        calendarButton.setPreferredSize(new Dimension(30, birthdayField.getPreferredSize().height));
+        calendarButton.setFocusPainted(false);
+        birthdayPanel.add(calendarButton, BorderLayout.EAST);
+
+        // Add calendar functionality
+        calendarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Create a custom calendar dialog
+                JDialog calendarDialog = new JDialog(EmployeeFrame.this, "Select Birthday", true);
+                calendarDialog.setLayout(new BorderLayout());
+                calendarDialog.setSize(300, 300);
+                calendarDialog.setLocationRelativeTo(birthdayField);
+
+                // Parse current date if one exists
+                java.util.Calendar calendar = java.util.Calendar.getInstance();
+                if (!birthdayField.getText().isEmpty()) {
+                    try {
+                        String[] dateParts = birthdayField.getText().split("/");
+                        if (dateParts.length == 3) {
+                            int month = Integer.parseInt(dateParts[0]) - 1; // Calendar months are 0-based
+                            int day = Integer.parseInt(dateParts[1]);
+                            int year = Integer.parseInt(dateParts[2]);
+                            calendar.set(year, month, day);
+                        }
+                    } catch (Exception ex) {
+                        // Use current date if parsing fails
+                    }
+                }
+
+                // Get current values
+                final int currentYear = calendar.get(java.util.Calendar.YEAR);
+                final int currentMonth = calendar.get(java.util.Calendar.MONTH);
+                final int currentDay = calendar.get(java.util.Calendar.DAY_OF_MONTH);
+
+                // Create month/year selection panel
+                JPanel controlPanel = new JPanel(new FlowLayout());
+
+                // Month dropdown
+                String[] months = {"January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"};
+                final JComboBox<String> monthComboBox = new JComboBox<>(months);
+                monthComboBox.setSelectedIndex(currentMonth);
+
+                // Year dropdown
+                final int maxYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+                Integer[] years = new Integer[maxYear - 1900 + 1];
+                for (int i = 0; i < years.length; i++) {
+                    years[i] = maxYear - i;
+                }
+                final JComboBox<Integer> yearComboBox = new JComboBox<>(years);
+                yearComboBox.setSelectedItem(currentYear);
+
+                controlPanel.add(monthComboBox);
+                controlPanel.add(yearComboBox);
+
+                // Create days panel
+                final JPanel daysPanel = new JPanel(new GridLayout(7, 7));
+
+                // Day selection action
+                final ActionListener dayActionListener = new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JButton dayButton = (JButton)e.getSource();
+                        int day = Integer.parseInt(dayButton.getText());
+                        int month = monthComboBox.getSelectedIndex() + 1; // Add 1 as display is 1-based
+                        int year = (Integer)yearComboBox.getSelectedItem();
+
+                        // Format as MM/dd/yyyy
+                        String formattedDate = String.format("%02d/%02d/%04d", month, day, year);
+                        birthdayField.setText(formattedDate);
+                        calendarDialog.dispose();
+                    }
+                };
+
+                // Update calendar function
+                final Runnable updateCalendar = new Runnable() {
+                    @Override
+                    public void run() {
+                        daysPanel.removeAll();
+
+                        // Add day labels
+                        for (String dayLabel : new String[]{"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"}) {
+                            JLabel label = new JLabel(dayLabel, JLabel.CENTER);
+                            label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                            daysPanel.add(label);
+                        }
+
+                        // Calculate days for selected month/year
+                        java.util.Calendar cal = java.util.Calendar.getInstance();
+                        cal.set((Integer)yearComboBox.getSelectedItem(), monthComboBox.getSelectedIndex(), 1);
+
+                        int firstDay = cal.get(java.util.Calendar.DAY_OF_WEEK) - 1; // Adjust to 0-based
+                        int daysInMonth = cal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
+
+                        // Add empty labels for days before the 1st
+                        for (int i = 0; i < firstDay; i++) {
+                            daysPanel.add(new JLabel());
+                        }
+
+                        // Add day buttons
+                        for (int i = 1; i <= daysInMonth; i++) {
+                            JButton dayButton = new JButton(Integer.toString(i));
+                            dayButton.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+                            dayButton.setFocusPainted(false);
+                            dayButton.setContentAreaFilled(true);
+                            dayButton.setBorderPainted(false);
+                            dayButton.setMargin(new Insets(2, 2, 2, 2));
+                            dayButton.addActionListener(dayActionListener);
+                            daysPanel.add(dayButton);
+                        }
+
+                        daysPanel.revalidate();
+                        daysPanel.repaint();
+                    }
+                };
+
+                // Add change listeners to controls
+                monthComboBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateCalendar.run();
+                    }
+                });
+
+                yearComboBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateCalendar.run();
+                    }
+                });
+
+                // Add components to dialog
+                calendarDialog.add(controlPanel, BorderLayout.NORTH);
+                calendarDialog.add(daysPanel, BorderLayout.CENTER);
+
+                // Add cancel button
+                JButton cancelButton = new JButton("Cancel");
+                cancelButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        calendarDialog.dispose();
+                    }
+                });
+                JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                buttonPanel.add(cancelButton);
+                calendarDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+                // Initialize calendar display
+                updateCalendar.run();
+
+                // Show dialog
+                calendarDialog.setVisible(true);
+            }
+        });
+
         panel1.add(idLabel);
         panel1.add(idField);
         panel1.add(lastNameLabel);
@@ -464,7 +630,7 @@ public class EmployeeFrame extends JFrame {
         panel1.add(firstNameLabel);
         panel1.add(firstNameField);
         panel1.add(birthdayLabel);
-        panel1.add(birthdayField);
+        panel1.add(birthdayPanel);
         panel1.add(addressLabel);
         panel1.add(addressField);
         panel1.add(phoneNumberLabel);
@@ -498,7 +664,6 @@ public class EmployeeFrame extends JFrame {
         bigPanel.add(panel1);
         bigPanel.add(panel2);
 
-
         // Initialize buttons
         saveButton = new JButton("Save");
         clearBackButton = new JButton("Back");
@@ -520,6 +685,9 @@ public class EmployeeFrame extends JFrame {
                 new MainFrame().setVisible(true);
             }
         });
+
+
+
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -623,6 +791,38 @@ public class EmployeeFrame extends JFrame {
                 Double.parseDouble(basicSalaryField.getText().replace(",", ""));
             } catch (NumberFormatException e) {
                 errorMessage.append("- Basic salary must be a valid number\n");
+                hasErrors = true;
+            }
+        }
+
+        //validation for sss number
+        if (!sssNumberField.getText().trim().isEmpty()) {
+            if (!sssNumberField.getText().matches("\\d{10}")) {
+                errorMessage.append("- Invalid SSS number format\n");
+                hasErrors = true;
+            }
+        }
+
+        //validation for philhealth number
+        if (!philhealthNumberField.getText().trim().isEmpty()) {
+            if (!philhealthNumberField.getText().matches("\\d{12}")) {
+                errorMessage.append("- Invalid PhilHealth number format\n");
+                hasErrors = true;
+            }
+        }
+
+        //validation for tin number
+        if (!tinNumberField.getText().trim().isEmpty()) {
+            if (!tinNumberField.getText().matches("\\d{9,12}")) {
+                errorMessage.append("- Invalid TIN number format\n");
+                hasErrors = true;
+            }
+        }
+
+        //validation for pagibig number
+        if (!pagibigNumberField.getText().trim().isEmpty()) {
+            if (!pagibigNumberField.getText().matches("\\d{12}")) {
+                errorMessage.append("- Invalid Pag-ibig number format\n");
                 hasErrors = true;
             }
         }
