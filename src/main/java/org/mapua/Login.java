@@ -8,11 +8,10 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Login {
-    // Encapsulation: Private fields for username and password
     private String username;
     private String password;
+    private String role;
 
-    // Encapsulation: Public getters and setters
     public void setUsername(String username) {
         this.username = username;
     }
@@ -29,14 +28,20 @@ public class Login {
         return password;
     }
 
-    // Abstraction: Public method to authenticate user
+    public String getRole() {
+        return role;
+    }
+
     public boolean isAuthenticated() throws FileNotFoundException, IOException, CsvValidationException {
         String filename = "resources/credentials.csv";
         try (CSVReader csvReader = new CSVReader(new FileReader(filename))) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
                 if (line[0].equals(username)) {
-                    return line[1].equals(password);
+                    if (line[1].equals(password)) {
+                        role = line[2]; // Assuming the role is in the third column
+                        return true;
+                    }
                 }
             }
         }

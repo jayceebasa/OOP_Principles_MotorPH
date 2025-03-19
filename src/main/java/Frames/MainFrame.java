@@ -30,6 +30,7 @@ public class MainFrame extends JFrame {
     private JScrollPane scrollPane;
     private JPanel listPanel;
     private JPanel buttonPanel;
+    private JButton manageLeavesButton;
 
     public MainFrame() {
         // Initialize EmployeeRepository and Employees with dependency injection
@@ -134,11 +135,21 @@ public class MainFrame extends JFrame {
             }
         });
 
+        // Manage Leaves Function
+        manageLeavesButton = new JButton("Manage Leaves");
+        manageLeavesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LeaveFrame().setVisible(true);
+            }
+        });
+
         buttonPanel = new JPanel();
         buttonPanel.add(editButton);
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(logoutButton);
+        buttonPanel.add(manageLeavesButton);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(listPanel, BorderLayout.NORTH);
@@ -183,6 +194,7 @@ public class MainFrame extends JFrame {
         styleButton(addButton, new Color(76, 175, 80), Color.WHITE);
         styleButton(deleteButton, new Color(211, 47, 47), Color.WHITE);
         styleButton(logoutButton, new Color(158, 158, 158), Color.WHITE);
+        styleButton(manageLeavesButton, new Color(255, 193, 7), Color.WHITE);
 
         // Style the panel
         listPanel.setBackground(Color.WHITE);
