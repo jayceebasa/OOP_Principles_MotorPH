@@ -23,7 +23,7 @@ public class LeaveFrame extends JFrame {
     public LeaveFrame() {
         leaveRepository = new LeaveRepository();
         setTitle("Leave Management");
-        setSize(400, 300);
+        setSize(1300, 900);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridLayout(6, 2));

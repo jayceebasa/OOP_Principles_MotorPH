@@ -18,13 +18,18 @@ public class EmployeeUIFrame extends JFrame {
     private String employeeId;
     private DecimalFormat df = new DecimalFormat("#,###.00");
 
+    private final Color primaryColor = new Color(25, 118, 210);
+    private final Color successColor = new Color(76, 175, 80);
+    private final Color dangerColor = new Color(211, 47, 47);
+    private final Color grayColor = new Color(158, 158, 158);
+    private final Color backgroundColor = Color.WHITE;
 
     public EmployeeUIFrame(String employeeId) {
         this.employeeId = employeeId;
         EmployeeRepository employeeRepository = new EmployeeRepository();
         this.employees = new Employees(employeeRepository);
         setTitle("Employee UI");
-        setSize(800, 600);
+        setSize(1300, 900);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -86,6 +91,7 @@ public class EmployeeUIFrame extends JFrame {
         hoursWorkedField = new JTextField();
         weeklyWageLabel = new JLabel(" Weekly Gross Wage:");
         weeklyWageField = new JTextField();
+        weeklyWageField.setEditable(false);
         withHoldingTaxDeductionLabel = new JLabel(" WithHolding Tax:");
         withHoldingTaxDeductionField = new JTextField();
         withHoldingTaxDeductionField.setEditable(false);
@@ -459,7 +465,121 @@ public class EmployeeUIFrame extends JFrame {
     }
 
     private void styleComponents() {
-        // Style components
+        // Style the frame
+        getContentPane().setBackground(backgroundColor);
+
+        // Style the tabbed pane (if it exists)
+        Component[] components = getContentPane().getComponents();
+        for (Component component : components) {
+            if (component instanceof JTabbedPane) {
+                JTabbedPane tabbedPane = (JTabbedPane) component;
+                tabbedPane.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                tabbedPane.setBackground(backgroundColor);
+
+                // Style each tab's content
+                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+                    Component tabComponent = tabbedPane.getComponentAt(i);
+                    if (tabComponent instanceof JPanel) {
+                        stylePanel((JPanel) tabComponent);
+                    }
+                }
+            }
+        }
+
+        // Style buttons
+        if (computeWageButton != null) {
+            styleButton(computeWageButton, successColor, Color.WHITE);
+        }
+        if (resetWageButton != null) {
+            styleButton(resetWageButton, dangerColor, Color.WHITE);
+        }
+
+        // Find and style Save and Logout buttons
+        findAndStyleButtons();
+    }
+
+    private void stylePanel(JPanel panel) {
+        panel.setBackground(backgroundColor);
+        Component[] components = panel.getComponents();
+        for (Component component : components) {
+            if (component instanceof JLabel) {
+                JLabel label = (JLabel) component;
+                label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            } else if (component instanceof JTextField) {
+                JTextField textField = (JTextField) component;
+                textField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                textField.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                        BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+            } else if (component instanceof JTextArea) {
+                JTextArea textArea = (JTextArea) component;
+                textArea.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                textArea.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                        BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+            } else if (component instanceof JPanel) {
+                stylePanel((JPanel) component);
+            }
+        }
+    }
+
+    private void styleButton(JButton button, Color bgColor, Color fgColor) {
+        button.setBackground(bgColor);
+        button.setForeground(fgColor);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
+
+        // Adjust button sizing to prevent text distortion
+        int textWidth = button.getFontMetrics(button.getFont()).stringWidth(button.getText());
+        int minWidth = Math.max(100, textWidth + 30); // Ensure minimum width with padding
+        button.setPreferredSize(new Dimension(minWidth, 35));
+
+        // Use less padding to prevent text cutoff
+        button.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+        // Add hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                button.setBackground(darken(bgColor, 0.1f));
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                button.setBackground(bgColor);
+            }
+        });
+    }
+
+    private Color darken(Color color, float fraction) {
+        int red = Math.max(0, Math.round(color.getRed() * (1 - fraction)));
+        int green = Math.max(0, Math.round(color.getGreen() * (1 - fraction)));
+        int blue = Math.max(0, Math.round(color.getBlue() * (1 - fraction)));
+        return new Color(red, green, blue);
+    }
+
+    private void findAndStyleButtons() {
+        // Recursively find and style all buttons in the UI
+        findButtonsInContainer(getContentPane());
+    }
+
+    private void findButtonsInContainer(Container container) {
+        Component[] components = container.getComponents();
+        for (Component component : components) {
+            if (component instanceof JButton) {
+                JButton button = (JButton) component;
+                if (button != computeWageButton && button != resetWageButton) {
+                    if (button.getText().equals("Save")) {
+                        styleButton(button, primaryColor, Color.WHITE);
+                    } else if (button.getText().equals("Logout")) {
+                        styleButton(button, grayColor, Color.WHITE);
+                    }
+                }
+            } else if (component instanceof Container) {
+                findButtonsInContainer((Container) component);
+            }
+        }
     }
 
     public static void main(String[] args) {

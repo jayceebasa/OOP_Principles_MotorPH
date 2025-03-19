@@ -227,6 +227,7 @@ public class EmployeeFrame extends JFrame {
         hoursWorkedField = new JTextField();
         weeklyWageLabel = new JLabel(" Weekly Gross Wage:");
         weeklyWageField = new JTextField();
+        weeklyWageField.setEditable(false);
         withHoldingTaxDeductionLabel = new JLabel(" WithHolding Tax:");
         withHoldingTaxDeductionField = new JTextField();
         withHoldingTaxDeductionField.setEditable(false);
