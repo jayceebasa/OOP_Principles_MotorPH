@@ -104,11 +104,15 @@ public class LoginFrame extends JFrame {
         login.setPassword(passwordField.getPassword());
 
         try {
-            if ((!login.getUsername().isEmpty()) && (!login.getPassword().isEmpty())) {
+            if ((!login.getUsername().isEmpty()) && (login.getPassword().length != 0)) {
                 if (login.isAuthenticated()) {
                     JOptionPane.showMessageDialog(this, "Login Successful!");
                     dispose();
-                    new MainFrame().setVisible(true);
+                    if (login.getRole().equals("Admin")) {
+                        new MainFrame().setVisible(true);
+                    } else if (login.getRole().equals("Employee")) {
+                        new EmployeeUIFrame(login.getEmployeeId()).setVisible(true);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(this, "Username or Password is incorrect. Try again.");
                 }
