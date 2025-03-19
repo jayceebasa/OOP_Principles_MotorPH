@@ -610,7 +610,7 @@ public class EmployeeFrame extends JFrame {
 
         // Phone number validation
         if (!phoneNumberField.getText().trim().isEmpty()) {
-            if (!phoneNumberField.getText().matches("\\d{11}|\\d{3}-\\d{3}-\\d{4}")) {
+            if (!phoneNumberField.getText().matches("\\d{9}|\\d{3}-\\d{3}-\\d{4}")) {
                 errorMessage.append("- Invalid phone number format\n");
                 hasErrors = true;
             }
