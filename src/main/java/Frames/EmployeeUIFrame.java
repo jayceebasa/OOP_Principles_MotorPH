@@ -395,8 +395,67 @@ public class EmployeeUIFrame extends JFrame {
     }
 
     private void saveEmployee() {
-        Employee employee = new RegularEmployee();
-        // Save employee data
+        // Get references to the editable fields from the profile panel
+        Component[] components = ((JPanel)((JPanel)((JTabbedPane)getContentPane().getComponent(0))
+                .getComponentAt(0)).getComponent(0)).getComponents();
+
+        JTextField lastNameField = (JTextField)((JPanel)components[0]).getComponent(3);
+        JTextField firstNameField = (JTextField)((JPanel)components[0]).getComponent(5);
+        JTextField birthdayField = (JTextField)((JPanel)components[0]).getComponent(7);
+        JTextArea addressField = (JTextArea)((JPanel)components[0]).getComponent(9);
+        JTextField phoneNumberField = (JTextField)((JPanel)components[0]).getComponent(11);
+
+        // Validation flags
+        boolean hasErrors = false;
+        StringBuilder errorMessage = new StringBuilder("Please correct the following errors:\n");
+
+        // Required field validation
+        if (lastNameField.getText().trim().isEmpty()) {
+            errorMessage.append("- Last Name is required\n");
+            hasErrors = true;
+        }
+
+        if (firstNameField.getText().trim().isEmpty()) {
+            errorMessage.append("- First Name is required\n");
+            hasErrors = true;
+        }
+
+        // Date format validation for birthdate
+        if (!birthdayField.getText().trim().isEmpty()) {
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/dd/yyyy");
+                sdf.setLenient(false);
+                sdf.parse(birthdayField.getText());
+            } catch (java.text.ParseException e) {
+                errorMessage.append("- Birthday must be in MM/DD/YYYY format\n");
+                hasErrors = true;
+            }
+        }
+
+        // Phone number validation
+        if (!phoneNumberField.getText().trim().isEmpty()) {
+            if (!phoneNumberField.getText().matches("\\d{9}|\\d{3}-\\d{3}-\\d{4}")) {
+                errorMessage.append("- Invalid phone number format\n");
+                hasErrors = true;
+            }
+        }
+
+        // Show error message if validation fails
+        if (hasErrors) {
+            JOptionPane.showMessageDialog(this, errorMessage.toString(), "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Get the current employee and update only editable fields
+        Employee employee = employees.getEmployeeById(employeeId);
+        employee.setLastName(lastNameField.getText());
+        employee.setFirstName(firstNameField.getText());
+        employee.setBirthdate(birthdayField.getText());
+        employee.setAddress(addressField.getText());
+        employee.setPhoneNumber(phoneNumberField.getText());
+
+        // Update employee in the repository
+        employees.updateEmployee(employee);
     }
 
     private void styleComponents() {
