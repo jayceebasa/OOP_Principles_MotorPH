@@ -48,6 +48,31 @@ public class EmployeeUIFrame extends JFrame {
         styleComponents();
     }
 
+    // Add this to EmployeeUIFrame class
+    private boolean validateHoursWorked() {
+        String hours = hoursWorkedField.getText().trim();
+        if (hours.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter hours worked per week.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        try {
+            double hoursWorked = Double.parseDouble(hours);
+            if (hoursWorked <= 0) {
+                JOptionPane.showMessageDialog(this, "Hours worked must be greater than zero.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            if (hoursWorked > 168) { // Max hours in a week
+                JOptionPane.showMessageDialog(this, "Hours worked cannot exceed 168 hours per week.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Hours worked must be a valid number.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+
     private JPanel createWagePanel(Employee employee) {
         JPanel bigPanel = new JPanel();
         bigPanel.setLayout(new GridLayout(1, 2, 5, 5));
@@ -163,11 +188,11 @@ public class EmployeeUIFrame extends JFrame {
         computeWageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (hoursWorkedField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please enter hours worked per week.");
+                if (!validateHoursWorked()) {
                     return;
                 }
 
+                // Rest of the calculation code remains the same
                 hoursWorkedField.setEditable(false);
                 hoursWorkedField.setBackground(Color.white);
 

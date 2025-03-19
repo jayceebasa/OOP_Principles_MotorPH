@@ -59,7 +59,87 @@ public class LeaveFrame extends JFrame {
         });
     }
 
+    private boolean validateLeaveForm() {
+        boolean hasErrors = false;
+        StringBuilder errorMessage = new StringBuilder("Please correct the following errors:\n");
+
+        // Employee ID validation
+        if (employeeIdField.getText().trim().isEmpty()) {
+            errorMessage.append("- Employee ID is required\n");
+            hasErrors = true;
+        }
+
+        // Leave type validation
+        if (leaveTypeField.getText().trim().isEmpty()) {
+            errorMessage.append("- Leave type is required\n");
+            hasErrors = true;
+        }
+
+        // Date validations
+        String startDate = startDateField.getText().trim();
+        String endDate = endDateField.getText().trim();
+        if (startDate.isEmpty()) {
+            errorMessage.append("- Start date is required\n");
+            hasErrors = true;
+        } else {
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/dd/yyyy");
+                sdf.setLenient(false);
+                java.util.Date parsedStartDate = sdf.parse(startDate);
+
+                // Check if start date is in the past
+                if (parsedStartDate.before(new java.util.Date())) {
+                    errorMessage.append("- Start date cannot be in the past\n");
+                    hasErrors = true;
+                }
+
+                // Check end date if provided
+                if (!endDate.isEmpty()) {
+                    java.util.Date parsedEndDate = sdf.parse(endDate);
+                    if (parsedEndDate.before(parsedStartDate)) {
+                        errorMessage.append("- End date must be after or equal to start date\n");
+                        hasErrors = true;
+                    }
+                }
+            } catch (java.text.ParseException e) {
+                errorMessage.append("- Start date must be in MM/DD/YYYY format\n");
+                hasErrors = true;
+            }
+        }
+
+        if (endDate.isEmpty()) {
+            errorMessage.append("- End date is required\n");
+            hasErrors = true;
+        } else if (!hasErrors) { // Only validate format if no other date errors
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/dd/yyyy");
+                sdf.setLenient(false);
+                sdf.parse(endDate);
+            } catch (java.text.ParseException e) {
+                errorMessage.append("- End date must be in MM/DD/YYYY format\n");
+                hasErrors = true;
+            }
+        }
+
+        // Reason validation
+        if (reasonField.getText().trim().isEmpty()) {
+            errorMessage.append("- Reason for leave is required\n");
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            JOptionPane.showMessageDialog(this, errorMessage.toString(), "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
     private void saveLeave() {
+        if (!validateLeaveForm()) {
+            return;
+        }
+
         Leave leave = new Leave();
         leave.setEmployeeId(employeeIdField.getText());
         leave.setLeaveType(leaveTypeField.getText());

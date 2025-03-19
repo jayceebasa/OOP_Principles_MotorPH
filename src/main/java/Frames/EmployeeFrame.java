@@ -544,6 +544,63 @@ public class EmployeeFrame extends JFrame {
     }
 
     private void saveEmployee() {
+        // Validation flags
+        boolean hasErrors = false;
+        StringBuilder errorMessage = new StringBuilder("Please correct the following errors:\n");
+
+        // Required field validation
+        if (idField.getText().trim().isEmpty()) {
+            errorMessage.append("- Employee ID is required\n");
+            hasErrors = true;
+        }
+
+        if (lastNameField.getText().trim().isEmpty()) {
+            errorMessage.append("- Last Name is required\n");
+            hasErrors = true;
+        }
+
+        if (firstNameField.getText().trim().isEmpty()) {
+            errorMessage.append("- First Name is required\n");
+            hasErrors = true;
+        }
+
+        // Date format validation for birthdate
+        if (!birthdayField.getText().trim().isEmpty()) {
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/dd/yyyy");
+                sdf.setLenient(false);
+                sdf.parse(birthdayField.getText());
+            } catch (java.text.ParseException e) {
+                errorMessage.append("- Birthday must be in MM/DD/YYYY format\n");
+                hasErrors = true;
+            }
+        }
+
+        // Phone number validation
+        if (!phoneNumberField.getText().trim().isEmpty()) {
+            if (!phoneNumberField.getText().matches("\\d{10}|\\d{3}-\\d{3}-\\d{4}")) {
+                errorMessage.append("- Invalid phone number format\n");
+                hasErrors = true;
+            }
+        }
+
+        // Numeric validation for salary fields
+        if (!basicSalaryField.getText().trim().isEmpty()) {
+            try {
+                Double.parseDouble(basicSalaryField.getText().replace(",", ""));
+            } catch (NumberFormatException e) {
+                errorMessage.append("- Basic salary must be a valid number\n");
+                hasErrors = true;
+            }
+        }
+
+        // Show error message if validation fails
+        if (hasErrors) {
+            JOptionPane.showMessageDialog(this, errorMessage.toString(), "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Proceed with saving if validation passes
         Employee employee = new RegularEmployee(); // Use RegularEmployee or PartTimeEmployee
         employee.setEmployeeNumber(idField.getText());
         employee.setLastName(lastNameField.getText());

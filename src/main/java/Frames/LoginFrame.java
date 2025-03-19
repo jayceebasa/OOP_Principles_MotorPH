@@ -27,6 +27,38 @@ public class LoginFrame extends JFrame {
         initComponents();
     }
 
+    // Add this to LoginFrame class
+    private boolean validateLoginFields() {
+        String username = usernameField.getText().trim();
+        char[] password = passwordField.getPassword();
+
+        if (username.isEmpty() && password.length == 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Username and password are required fields!",
+                    "Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (username.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Username is a required field!",
+                    "Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (password.length == 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Password is a required field!",
+                    "Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
     private void initComponents() {
         setTitle("MotorPH Login");
         setSize(450, 700);
@@ -98,29 +130,34 @@ public class LoginFrame extends JFrame {
         getRootPane().setDefaultButton(loginButton);
     }
 
+
+
     private void loginbtnMouseClicked() {
+        if (!validateLoginFields()) {
+            return;
+        }
+
         Login login = new Login();
         login.setUsername(usernameField.getText());
         login.setPassword(passwordField.getPassword());
 
         try {
-            if ((!login.getUsername().isEmpty()) && (login.getPassword().length != 0)) {
-                if (login.isAuthenticated()) {
-                    JOptionPane.showMessageDialog(this, "Login Successful!");
-                    dispose();
-                    if (login.getRole().equals("Admin")) {
-                        new MainFrame().setVisible(true);
-                    } else if (login.getRole().equals("Employee")) {
-                        new EmployeeUIFrame(login.getEmployeeId()).setVisible(true);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Username or Password is incorrect. Try again.");
+            if (login.isAuthenticated()) {
+                JOptionPane.showMessageDialog(this, "Login Successful!");
+                dispose();
+                if (login.getRole().equals("Admin")) {
+                    new MainFrame().setVisible(true);
+                } else if (login.getRole().equals("Employee")) {
+                    new EmployeeUIFrame(login.getEmployeeId()).setVisible(true);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Username and password is a required field!");
+                JOptionPane.showMessageDialog(this, "Username or Password is incorrect. Try again.");
             }
         } catch (IOException | CsvValidationException ex) {
-            Logger.getLogger(LoginFrame.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this,
+                    "System error: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
