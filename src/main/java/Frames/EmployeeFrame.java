@@ -79,9 +79,14 @@ public class EmployeeFrame extends JFrame {
         tabbedPane = new JTabbedPane();
         tabbedPane.add("Profile", createProfilePanel());
 
+        // Set the next available ID for new employees
+        idField.setText(employees.getNextEmployeeId());
+        idField.setEnabled(false);  // Disable editing of the ID field
+        isUpdate = false;
+
         getContentPane().add(tabbedPane);
 
-        // Add this line to apply styling
+        // Apply styling
         styleComponents();
     }
 

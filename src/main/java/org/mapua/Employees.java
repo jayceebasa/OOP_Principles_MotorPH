@@ -20,6 +20,44 @@ public class Employees {
         return new String[]{"Employee Id", "Last Name", "First Name", "Birthday", "Status", "Position"};
     }
 
+
+    public List<Employee> getAllEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        try {
+            List<String[]> records = employeeRepository.readEmployees();
+            for (String[] row : records) {
+                if (!row[0].equalsIgnoreCase("Employee #")) {
+                    // Use a concrete subclass (e.g., RegularEmployee)
+                    Employee employee = new RegularEmployee();
+                    employee.setEmployeeNumber(row[0].trim());
+                    employee.setLastName(row[1].trim());
+                    employee.setFirstName(row[2].trim());
+                    employee.setBirthdate(row[3].trim());
+                    employee.setAddress(row[4].trim());
+                    employee.setPhoneNumber(row[5].trim());
+                    employee.setSss(row[6].trim());
+                    employee.setPhilHealth(row[7].trim());
+                    employee.setTin(row[8].trim());
+                    employee.setPagibig(row[9].trim());
+                    employee.setStatus(row[10].trim());
+                    employee.setPosition(row[11].trim());
+                    employee.setImmediateSupervisor(row[12].trim());
+                    employee.setBasicSalary(row[13].trim());
+                    employee.setRiceSubsidy(row[14].trim());
+                    employee.setPhoneAllowance(row[15].trim());
+                    employee.setClothingAllowance(row[16].trim());
+                    employee.setGrossSemiMonthlyRate(row[17].trim());
+                    employee.setHourlyRate(row[18].trim());
+                    employees.add(employee);
+                }
+            }
+        } catch (IOException | CsvValidationException e) {
+            throw new RuntimeException(e);
+        }
+        return employees;
+    }
+
+
     // Encapsulation: Public method to generate employee ID
     public String generateId() {
         int newId = 1;
@@ -36,7 +74,23 @@ public class Employees {
         return String.valueOf(newId + 1);
     }
 
-    // Abstraction: Public method to get employee by ID
+    public String getNextEmployeeId() {
+        int highestId = 0;
+
+        for (Employee employee : getAllEmployees()) {
+            try {
+                int currentId = Integer.parseInt(employee.getEmployeeNumber());
+                if (currentId > highestId) {
+                    highestId = currentId;
+                }
+            } catch (NumberFormatException e) {
+                // Skip non-numeric IDs
+            }
+        }
+
+        return String.valueOf(highestId + 1);
+    }
+    
     // Abstraction: Public method to get employee by ID
     public Employee getEmployeeById(String employeeId) {
         try {
