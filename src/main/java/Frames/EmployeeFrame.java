@@ -416,7 +416,7 @@ public class EmployeeFrame extends JFrame {
         JLabel idLabel = new JLabel("  Employee ID:");
         idField = new JTextField(employeeId);
         isUpdate = false;
-        idField.setEnabled(false);
+        idField.setEditable(false);
         JLabel lastNameLabel = new JLabel("  Last Name:");
         lastNameField = new JTextField();
         JLabel firstNameLabel = new JLabel("  First Name:");

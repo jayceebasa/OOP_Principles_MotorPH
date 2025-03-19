@@ -273,20 +273,25 @@ public class EmployeeUIFrame extends JFrame {
 
         JLabel idLabel = new JLabel("  Employee ID:");
         JTextField idField = new JTextField(employee.getEmployeeNumber());
-        idField.setEnabled(false);
+        idField.setEditable(false);
         JLabel lastNameLabel = new JLabel("  Last Name:");
         JTextField lastNameField = new JTextField(employee.getLastName());
+        lastNameField.setEditable(false);
         JLabel firstNameLabel = new JLabel("  First Name:");
         JTextField firstNameField = new JTextField(employee.getFirstName());
+        firstNameField.setEditable(false);
         JLabel birthdayLabel = new JLabel("  Birthday:");
         JTextField birthdayField = new JTextField(employee.getBirthdate());
+        birthdayField.setEditable(false);
         JLabel addressLabel = new JLabel("  Address:");
         JTextArea addressField = new JTextArea(employee.getAddress());
+        addressField.setEditable(false);
         addressField.setLineWrap(true);
         addressField.setBorder(BorderFactory.createEtchedBorder());
         addressField.setAutoscrolls(true);
         JLabel phoneNumberLabel = new JLabel("  Phone Number:");
         JTextField phoneNumberField = new JTextField(employee.getPhoneNumber());
+        phoneNumberField.setEditable(false);
         JLabel sssNumberLabel = new JLabel("  SSS Number:");
         JTextField sssNumberField = new JTextField(employee.getSss());
         sssNumberField.setEditable(false);
@@ -368,16 +373,9 @@ public class EmployeeUIFrame extends JFrame {
         bigPanel.add(panel1);
         bigPanel.add(panel2);
 
-        JButton saveButton = new JButton("Save");
+
         JButton clearBackButton = new JButton("Logout");
 
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveEmployee();
-                JOptionPane.showMessageDialog(null, "Record is saved!");
-            }
-        });
 
         clearBackButton.addActionListener(new ActionListener() {
             @Override
@@ -388,7 +386,6 @@ public class EmployeeUIFrame extends JFrame {
         });
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        buttonPanel.add(saveButton);
         buttonPanel.add(clearBackButton);
         panel2.add(new JLabel());
         panel2.add(buttonPanel);
@@ -398,70 +395,6 @@ public class EmployeeUIFrame extends JFrame {
     private void fillForm() {
         Employee employee = employees.getEmployeeById(this.employeeId);
         // Fill the form with employee data
-    }
-
-    private void saveEmployee() {
-        // Get references to the editable fields from the profile panel
-        Component[] components = ((JPanel)((JPanel)((JTabbedPane)getContentPane().getComponent(0))
-                .getComponentAt(0)).getComponent(0)).getComponents();
-
-        JTextField lastNameField = (JTextField)((JPanel)components[0]).getComponent(3);
-        JTextField firstNameField = (JTextField)((JPanel)components[0]).getComponent(5);
-        JTextField birthdayField = (JTextField)((JPanel)components[0]).getComponent(7);
-        JTextArea addressField = (JTextArea)((JPanel)components[0]).getComponent(9);
-        JTextField phoneNumberField = (JTextField)((JPanel)components[0]).getComponent(11);
-
-        // Validation flags
-        boolean hasErrors = false;
-        StringBuilder errorMessage = new StringBuilder("Please correct the following errors:\n");
-
-        // Required field validation
-        if (lastNameField.getText().trim().isEmpty()) {
-            errorMessage.append("- Last Name is required\n");
-            hasErrors = true;
-        }
-
-        if (firstNameField.getText().trim().isEmpty()) {
-            errorMessage.append("- First Name is required\n");
-            hasErrors = true;
-        }
-
-        // Date format validation for birthdate
-        if (!birthdayField.getText().trim().isEmpty()) {
-            try {
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/dd/yyyy");
-                sdf.setLenient(false);
-                sdf.parse(birthdayField.getText());
-            } catch (java.text.ParseException e) {
-                errorMessage.append("- Birthday must be in MM/DD/YYYY format\n");
-                hasErrors = true;
-            }
-        }
-
-        // Phone number validation
-        if (!phoneNumberField.getText().trim().isEmpty()) {
-            if (!phoneNumberField.getText().matches("\\d{9}|\\d{3}-\\d{3}-\\d{4}")) {
-                errorMessage.append("- Invalid phone number format\n");
-                hasErrors = true;
-            }
-        }
-
-        // Show error message if validation fails
-        if (hasErrors) {
-            JOptionPane.showMessageDialog(this, errorMessage.toString(), "Validation Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Get the current employee and update only editable fields
-        Employee employee = employees.getEmployeeById(employeeId);
-        employee.setLastName(lastNameField.getText());
-        employee.setFirstName(firstNameField.getText());
-        employee.setBirthdate(birthdayField.getText());
-        employee.setAddress(addressField.getText());
-        employee.setPhoneNumber(phoneNumberField.getText());
-
-        // Update employee in the repository
-        employees.updateEmployee(employee);
     }
 
     private void styleComponents() {
