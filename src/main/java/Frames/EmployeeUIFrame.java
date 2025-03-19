@@ -18,6 +18,7 @@ public class EmployeeUIFrame extends JFrame {
     private String employeeId;
     private DecimalFormat df = new DecimalFormat("#,###.00");
 
+
     public EmployeeUIFrame(String employeeId) {
         this.employeeId = employeeId;
         EmployeeRepository employeeRepository = new EmployeeRepository();
@@ -37,8 +38,9 @@ public class EmployeeUIFrame extends JFrame {
         }
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.add("Profile", createProfilePanel());
+        tabbedPane.add("Profile", createProfilePanel(employee));
         tabbedPane.add("Wage", createWagePanel(employee)); // Pass the employee object
+        tabbedPane.add("Leave Request", new LeaveRequestPanel(employeeId)); // Add LeaveRequestPanel
         add(tabbedPane, BorderLayout.CENTER);
 
         fillForm();
@@ -229,53 +231,53 @@ public class EmployeeUIFrame extends JFrame {
         return grossWageField;
     }
 
-    private JPanel createProfilePanel() {
+    private JPanel createProfilePanel(Employee employee) {
         JPanel bigPanel = new JPanel(new GridLayout(1, 2, 5, 5));
         JPanel panel1 = new JPanel(new GridLayout(10, 2, 5, 5));
         JPanel panel2 = new JPanel(new GridLayout(10, 2, 5, 5));
 
         JLabel idLabel = new JLabel("  Employee ID:");
-        JTextField idField = new JTextField(employees.generateId());
+        JTextField idField = new JTextField(employee.getEmployeeNumber());
         idField.setEnabled(false);
         JLabel lastNameLabel = new JLabel("  Last Name:");
-        JTextField lastNameField = new JTextField();
+        JTextField lastNameField = new JTextField(employee.getLastName());
         JLabel firstNameLabel = new JLabel("  First Name:");
-        JTextField firstNameField = new JTextField();
+        JTextField firstNameField = new JTextField(employee.getFirstName());
         JLabel birthdayLabel = new JLabel("  Birthday:");
-        JTextField birthdayField = new JTextField();
+        JTextField birthdayField = new JTextField(employee.getBirthdate());
         JLabel addressLabel = new JLabel("  Address:");
-        JTextArea addressField = new JTextArea();
+        JTextArea addressField = new JTextArea(employee.getAddress());
         addressField.setLineWrap(true);
         addressField.setBorder(BorderFactory.createEtchedBorder());
         addressField.setAutoscrolls(true);
         JLabel phoneNumberLabel = new JLabel("  Phone Number:");
-        JTextField phoneNumberField = new JTextField();
+        JTextField phoneNumberField = new JTextField(employee.getPhoneNumber());
         JLabel sssNumberLabel = new JLabel("  SSS Number:");
-        JTextField sssNumberField = new JTextField();
+        JTextField sssNumberField = new JTextField(employee.getSss());
         JLabel philhealthNumberLabel = new JLabel("  Philhealth Number:");
-        JTextField philhealthNumberField = new JTextField();
+        JTextField philhealthNumberField = new JTextField(employee.getPhilHealth());
         JLabel tinNumberLabel = new JLabel("  Tax Income Number:");
-        JTextField tinNumberField = new JTextField();
+        JTextField tinNumberField = new JTextField(employee.getTin());
         JLabel housingNumberLabel = new JLabel("  Pagibig Number:");
-        JTextField pagibigNumberField = new JTextField();
+        JTextField pagibigNumberField = new JTextField(employee.getPagibig());
         JLabel statusLabel = new JLabel(" Status:");
-        JTextField statusField = new JTextField();
+        JTextField statusField = new JTextField(employee.getStatus());
         JLabel positionLabel = new JLabel(" Position:");
-        JTextField positionField = new JTextField();
+        JTextField positionField = new JTextField(employee.getPosition());
         JLabel supervisorLabel = new JLabel(" Immediate Supervisor:");
-        JTextField supervisorField = new JTextField();
+        JTextField supervisorField = new JTextField(employee.getImmediateSupervisor());
         JLabel basicSalaryLabel = new JLabel(" Basic Salary:");
-        JTextField basicSalaryField = new JTextField();
+        JTextField basicSalaryField = new JTextField(employee.getBasicSalary());
         JLabel riceSubsidyLabel = new JLabel(" Rice Subsidy:");
-        JTextField riceSubsidyField = new JTextField();
+        JTextField riceSubsidyField = new JTextField(employee.getRiceSubsidy());
         JLabel phoneAllowanceLabel = new JLabel(" Phone Allowance:");
-        JTextField phoneAllowanceField = new JTextField();
+        JTextField phoneAllowanceField = new JTextField(employee.getPhoneAllowance());
         JLabel clothingAllowanceLabel = new JLabel(" Clothing Allowance:");
-        JTextField clothingAllowanceField = new JTextField();
+        JTextField clothingAllowanceField = new JTextField(employee.getClothingAllowance());
         JLabel grossSemiMonthlyRateLabel = new JLabel(" Gross Semi-monthly Rate:");
-        JTextField grossSemiMonthlyRateField = new JTextField();
+        JTextField grossSemiMonthlyRateField = new JTextField(employee.getGrossSemiMonthlyRate());
         JLabel hourlyRateLabel = new JLabel(" Hourly Rate:");
-        JTextField hourlyRateField = new JTextField();
+        JTextField hourlyRateField = new JTextField(employee.getHourlyRate());
 
         panel1.add(idLabel);
         panel1.add(idField);
