@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
@@ -212,42 +213,127 @@ public class LeaveRequestPanel extends JPanel {
     }
 
     private void showDatePicker(JFormattedTextField dateField) {
-        // Simple date picker implementation - in a real app, use JDatePicker or similar library
-        JFrame datePickerFrame = new JFrame("Select Date");
-        datePickerFrame.setSize(250, 220);
-        datePickerFrame.setLocationRelativeTo(this);
+        // Create date picker dialog
+        JDialog datePickerDialog = new JDialog((Frame)SwingUtilities.getWindowAncestor(this), "Select Date", true);
+        datePickerDialog.setSize(300, 350);
+        datePickerDialog.setLocationRelativeTo(this);
+        datePickerDialog.setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel(new BorderLayout());
-
-        // Create a calendar panel
-        JPanel calendarPanel = new JPanel(new GridLayout(7, 7));
+        // Calendar instance for date manipulation
         Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentYear = calendar.get(Calendar.YEAR);
 
-        // Headers for days
-        String[] days = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
-        for (String day : days) {
+        // Month/Year navigation panel
+        JPanel navigationPanel = new JPanel(new BorderLayout());
+        JButton prevMonth = new JButton("◀");
+        JButton nextMonth = new JButton("▶");
+        JLabel monthYearLabel = new JLabel("", JLabel.CENTER);
+        navigationPanel.add(prevMonth, BorderLayout.WEST);
+        navigationPanel.add(monthYearLabel, BorderLayout.CENTER);
+        navigationPanel.add(nextMonth, BorderLayout.EAST);
+        datePickerDialog.add(navigationPanel, BorderLayout.NORTH);
+
+        // Days panel - will be recreated when month changes
+        JPanel daysPanel = new JPanel(new BorderLayout());
+        datePickerDialog.add(daysPanel, BorderLayout.CENTER);
+
+        // Action to update calendar when month changes
+        ActionListener monthChangeListener = e -> {
+            if (e.getSource() == prevMonth) {
+                calendar.add(Calendar.MONTH, -1);
+            } else {
+                calendar.add(Calendar.MONTH, 1);
+            }
+            updateCalendarPanel(calendar, daysPanel, dateField, datePickerDialog);
+        };
+
+        prevMonth.addActionListener(monthChangeListener);
+        nextMonth.addActionListener(monthChangeListener);
+
+        // Initialize the calendar display
+        updateCalendarPanel(calendar, daysPanel, dateField, datePickerDialog);
+
+        datePickerDialog.setVisible(true);
+    }
+
+    private void updateCalendarPanel(Calendar calendar, JPanel daysPanel, JFormattedTextField dateField, JDialog dialog) {
+        daysPanel.removeAll();
+
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+
+        // Update month/year label
+        Container parent = daysPanel.getParent();
+        ((JLabel)((JPanel)parent.getComponent(0)).getComponent(1)).setText(
+                new java.text.SimpleDateFormat("MMMM yyyy").format(calendar.getTime()));
+
+        // Create panel for days
+        JPanel calendarPanel = new JPanel(new GridLayout(0, 7));
+
+        // Add day of week headers
+        String[] daysOfWeek = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
+        for (String day : daysOfWeek) {
             JLabel label = new JLabel(day, JLabel.CENTER);
             label.setForeground(primaryColor);
             calendarPanel.add(label);
         }
 
-        // Day buttons
+        // Get first day of month
+        Calendar temp = (Calendar)calendar.clone();
+        temp.set(Calendar.DAY_OF_MONTH, 1);
+        int firstDayOfMonth = temp.get(Calendar.DAY_OF_WEEK) - 1; // 0 = Sunday
+
+        // Add empty labels for days before first day of month
+        for (int i = 0; i < firstDayOfMonth; i++) {
+            calendarPanel.add(new JLabel(""));
+        }
+
+        // Add buttons for days in month
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         for (int i = 1; i <= daysInMonth; i++) {
             JButton dayButton = new JButton(String.valueOf(i));
-            int day = i;
+            dayButton.setMargin(new Insets(1, 1, 1, 1));
+
+            final int day = i;
             dayButton.addActionListener(e -> {
-                calendar.set(Calendar.DAY_OF_MONTH, day);
-                dateField.setText(dateFormat.format(calendar.getTime()));
-                datePickerFrame.dispose();
+                Calendar selectedDate = (Calendar)calendar.clone();
+                selectedDate.set(Calendar.DAY_OF_MONTH, day);
+                dateField.setText(dateFormat.format(selectedDate.getTime()));
+                dialog.dispose();
                 updateDaysCount();
             });
+
+            // Highlight current day
+            if (year == Calendar.getInstance().get(Calendar.YEAR) &&
+                    month == Calendar.getInstance().get(Calendar.MONTH) &&
+                    i == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)) {
+                dayButton.setBackground(new Color(135, 206, 250)); // Light blue
+                dayButton.setForeground(Color.WHITE);
+            }
+
             calendarPanel.add(dayButton);
         }
 
-        panel.add(calendarPanel, BorderLayout.CENTER);
-        datePickerFrame.add(panel);
-        datePickerFrame.setVisible(true);
+        // Add the calendar to a scroll pane
+        JScrollPane scrollPane = new JScrollPane(calendarPanel);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        daysPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Add today button at bottom
+        JButton todayButton = new JButton("Today");
+        todayButton.addActionListener(e -> {
+            dateField.setText(dateFormat.format(new Date()));
+            dialog.dispose();
+            updateDaysCount();
+        });
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.add(todayButton);
+        daysPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        daysPanel.revalidate();
+        daysPanel.repaint();
     }
 
     private void updateBalanceLabel(JLabel label, String leaveType) {
@@ -426,13 +512,15 @@ public class LeaveRequestPanel extends JPanel {
         String startDate = startDateField.getText();
         String endDate = endDateField.getText();
         String reason = reasonField.getText();
+        String status = "Pending"; // Default status for new leave requests
 
         try (FileWriter writer = new FileWriter("resources/Leaves.csv", true)) {
             writer.append(employeeId).append(',')
                     .append(leaveType).append(',')
                     .append(startDate).append(',')
                     .append(endDate).append(',')
-                    .append(reason.replace(',', ';')).append('\n');
+                    .append(reason.replace(',', ';')).append(',')
+                    .append(status).append('\n');
 
             // Update balance (in a real app, this would persist to a database)
             Integer balance = leaveBalances.get(leaveType);
@@ -440,7 +528,7 @@ public class LeaveRequestPanel extends JPanel {
                 try {
                     Date start = dateFormat.parse(startDate);
                     Date end = dateFormat.parse(endDate);
-                    int days = (int)((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+                    int days = (int) ((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
                     leaveBalances.put(leaveType, balance - days);
                 } catch (ParseException ex) {
                     // Ignore, since we've already validated

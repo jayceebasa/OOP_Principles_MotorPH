@@ -39,8 +39,9 @@ public class EmployeeUIFrame extends JFrame {
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add("Profile", createProfilePanel(employee));
-        tabbedPane.add("Wage", createWagePanel(employee)); // Pass the employee object
-        tabbedPane.add("Leave Request", new LeaveRequestPanel(employeeId)); // Add LeaveRequestPanel
+        tabbedPane.add("Wage", createWagePanel(employee));
+        tabbedPane.add("Request Leave", new LeaveRequestPanel(employeeId));
+        tabbedPane.add("My Leaves", new MyLeavesPanel(employeeId)); // Add the new panel
         add(tabbedPane, BorderLayout.CENTER);
 
         fillForm();

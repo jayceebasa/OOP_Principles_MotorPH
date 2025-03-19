@@ -6,8 +6,9 @@ public class Leave {
     private String startDate;
     private String endDate;
     private String reason;
+    private String status; // "Pending", "Approved", or "Declined"
 
-    // Getters and setters
+    // Existing getters and setters
     public String getEmployeeId() { return employeeId; }
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
     public String getLeaveType() { return leaveType; }
@@ -18,4 +19,8 @@ public class Leave {
     public void setEndDate(String endDate) { this.endDate = endDate; }
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
+
+    // New status getter and setter
+    public String getStatus() { return status == null ? "Pending" : status; }
+    public void setStatus(String status) { this.status = status; }
 }

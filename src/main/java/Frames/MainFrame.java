@@ -38,7 +38,7 @@ public class MainFrame extends JFrame {
         employees = new Employees(employeeRepository);
 
         setTitle("MotorPH Portal");
-        setSize(650, 400);
+        setSize(1300, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -136,11 +136,11 @@ public class MainFrame extends JFrame {
         });
 
         // Manage Leaves Function
-        manageLeavesButton = new JButton("Manage Leaves");
+        manageLeavesButton = new JButton("Leaves");
         manageLeavesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new LeaveFrame().setVisible(true);
+                new LeavesManagementFrame().setVisible(true);
             }
         });
 

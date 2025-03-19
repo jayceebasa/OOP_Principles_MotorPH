@@ -73,7 +73,7 @@ public class EmployeeFrame extends JFrame {
         employees = new Employees(employeeRepository);
 
         setTitle("Employee Details");
-        setSize(900, 600);
+        setSize(1300, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         tabbedPane = new JTabbedPane();
@@ -381,7 +381,7 @@ public class EmployeeFrame extends JFrame {
         // Create button panel with FlowLayout to ensure buttons are visible
 
         JLabel idLabel = new JLabel("  Employee ID:");
-        idField = new JTextField(employees.generateId());
+        idField = new JTextField(employeeId);
         isUpdate = false;
         idField.setEnabled(false);
         JLabel lastNameLabel = new JLabel("  Last Name:");

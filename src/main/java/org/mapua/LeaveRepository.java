@@ -28,4 +28,21 @@ public class LeaveRepository {
             writer.writeAll(records);
         }
     }
+
+    public void updateLeaveStatus(String employeeId, int leaveIndex, String newStatus) throws IOException, CsvValidationException {
+        List<String[]> records = readLeaves();
+
+        // Make sure we're updating the correct record by direct index
+        if (leaveIndex >= 0 && leaveIndex < records.size()) {
+            String[] record = records.get(leaveIndex);
+            if (record.length >= 5) {
+                // Create a new record with the updated status
+                String[] updatedRecord = new String[6];
+                System.arraycopy(record, 0, updatedRecord, 0, Math.min(record.length, 5));
+                updatedRecord[5] = newStatus;
+                records.set(leaveIndex, updatedRecord);
+                writeLeaves(records);
+            }
+        }
+    }
 }
